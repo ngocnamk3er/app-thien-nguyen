@@ -1,4 +1,4 @@
-package danentang.app_thien_nguyen.auth;
+package danentang.app_thien_nguyen.controllers;
 
 import lombok.RequiredArgsConstructor;
 
@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import danentang.app_thien_nguyen.user.UserService;
+import danentang.app_thien_nguyen.models.auth.AuthenticationRequest;
+import danentang.app_thien_nguyen.models.auth.AuthenticationResponse;
+import danentang.app_thien_nguyen.models.auth.RegisterRequest;
+import danentang.app_thien_nguyen.services.AuthenticationService;
+import danentang.app_thien_nguyen.services.UserService;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,6 +54,7 @@ public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequ
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request) {
+    // System.out.println(request.get());
     return ResponseEntity.ok(service.authenticate(request));
   }
 

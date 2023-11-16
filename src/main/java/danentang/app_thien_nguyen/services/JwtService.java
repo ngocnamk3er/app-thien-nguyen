@@ -1,4 +1,4 @@
-package danentang.app_thien_nguyen.config;
+package danentang.app_thien_nguyen.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import danentang.app_thien_nguyen.user.User;
+// import danentang.app_thien_nguyen.user.User;
 
 @Service
 public class JwtService {
@@ -29,13 +29,13 @@ public class JwtService {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(User userDetails) {
+  public String generateToken(UserDetails userDetails) {
     return generateToken(new HashMap<>(), userDetails);
   }
 
   public String generateToken(
       Map<String, Object> extraClaims,
-      User userDetails
+      UserDetails userDetails
   ) {
     return Jwts
         .builder()

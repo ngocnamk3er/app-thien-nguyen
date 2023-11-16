@@ -1,7 +1,9 @@
-package danentang.app_thien_nguyen.user;
+package danentang.app_thien_nguyen.repositories;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import danentang.app_thien_nguyen.models.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 

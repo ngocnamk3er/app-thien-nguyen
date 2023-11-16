@@ -1,4 +1,4 @@
-package danentang.app_thien_nguyen.demo;
+package danentang.app_thien_nguyen.controllers;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;

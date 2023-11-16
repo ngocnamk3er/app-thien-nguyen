@@ -1,4 +1,4 @@
-package danentang.app_thien_nguyen.user;
+package danentang.app_thien_nguyen.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

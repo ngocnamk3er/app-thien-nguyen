@@ -1,5 +1,4 @@
-package danentang.app_thien_nguyen.auth;
-
+package danentang.app_thien_nguyen.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,10 +6,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import danentang.app_thien_nguyen.config.JwtService;
-import danentang.app_thien_nguyen.user.Role;
-import danentang.app_thien_nguyen.user.User;
-import danentang.app_thien_nguyen.user.UserRepository;
+import danentang.app_thien_nguyen.models.Role;
+import danentang.app_thien_nguyen.models.User;
+import danentang.app_thien_nguyen.models.auth.AuthenticationRequest;
+import danentang.app_thien_nguyen.models.auth.AuthenticationResponse;
+import danentang.app_thien_nguyen.models.auth.RegisterRequest;
+import danentang.app_thien_nguyen.repositories.UserRepository;
 
 @Service
 public class AuthenticationService {
@@ -19,7 +20,8 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public AuthenticationService(UserRepository repository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+  public AuthenticationService(UserRepository repository, PasswordEncoder passwordEncoder, JwtService jwtService,
+      AuthenticationManager authenticationManager) {
     this.repository = repository;
     this.passwordEncoder = passwordEncoder;
     this.jwtService = jwtService;
@@ -43,13 +45,12 @@ public class AuthenticationService {
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-        )
-    );
-    var user = repository.findByEmail(request.getEmail())
+            request.getUsername(),
+            request.getPassword()));
+    var user = repository.findByUsername(request.getUsername())
         .orElseThrow();
     var jwtToken = jwtService.generateToken(user);
+    System.out.println("jwtToken : " + jwtToken);
     return AuthenticationResponse.builder()
         .token(jwtToken)
         .build();

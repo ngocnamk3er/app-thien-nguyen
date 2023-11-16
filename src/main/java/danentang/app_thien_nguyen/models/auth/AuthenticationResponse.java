@@ -1,4 +1,4 @@
-package danentang.app_thien_nguyen.auth;
+package danentang.app_thien_nguyen.models.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
+public class AuthenticationResponse {
 
-  private String email;
-  String password;
+  private String token;
 }
