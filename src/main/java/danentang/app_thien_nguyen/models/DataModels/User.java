@@ -1,10 +1,12 @@
-package danentang.app_thien_nguyen.models;
+package danentang.app_thien_nguyen.models.DataModels;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +17,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import danentang.app_thien_nguyen.models.Role;
 
 @Data
 @Builder
@@ -30,6 +34,9 @@ public class User implements UserDetails {
   private String username;
   private String email;
   private String password;
+  
+  @OneToMany(mappedBy = "leaderId", cascade = CascadeType.ALL)
+  private List<Fanpage> fanpages;
 
   @Enumerated(EnumType.STRING)
   private Role role;

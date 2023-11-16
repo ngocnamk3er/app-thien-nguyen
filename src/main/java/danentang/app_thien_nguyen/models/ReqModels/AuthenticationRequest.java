@@ -1,4 +1,4 @@
-package danentang.app_thien_nguyen.models.auth;
+package danentang.app_thien_nguyen.models.ReqModels;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

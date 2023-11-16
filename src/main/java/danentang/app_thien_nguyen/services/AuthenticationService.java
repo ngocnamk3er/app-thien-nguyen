@@ -7,10 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import danentang.app_thien_nguyen.models.Role;
-import danentang.app_thien_nguyen.models.User;
-import danentang.app_thien_nguyen.models.auth.AuthenticationRequest;
-import danentang.app_thien_nguyen.models.auth.AuthenticationResponse;
-import danentang.app_thien_nguyen.models.auth.RegisterRequest;
+import danentang.app_thien_nguyen.models.DataModels.User;
+import danentang.app_thien_nguyen.models.ReqModels.AuthenticationRequest;
+import danentang.app_thien_nguyen.models.ReqModels.RegisterRequest;
+import danentang.app_thien_nguyen.models.ResModels.AuthenticationResponse;
 import danentang.app_thien_nguyen.repositories.UserRepository;
 
 @Service
@@ -29,7 +29,7 @@ public class AuthenticationService {
   }
 
   public AuthenticationResponse register(RegisterRequest request) {
-    var user = User.builder()
+    User user = User.builder()
         .username(request.getUsername())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))

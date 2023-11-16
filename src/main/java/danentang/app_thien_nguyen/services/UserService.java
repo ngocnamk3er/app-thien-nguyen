@@ -1,10 +1,13 @@
 package danentang.app_thien_nguyen.services;
 
+import java.util.Optional;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import danentang.app_thien_nguyen.models.DataModels.User;
 import danentang.app_thien_nguyen.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +23,10 @@ public class UserService implements UserDetailsService{
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public User findById(Integer userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Override
