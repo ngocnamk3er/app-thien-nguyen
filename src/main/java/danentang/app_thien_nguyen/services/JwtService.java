@@ -13,6 +13,8 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import danentang.app_thien_nguyen.models.DataModels.User;
+
 // import danentang.app_thien_nguyen.user.User;
 
 @Service
@@ -24,19 +26,30 @@ public class JwtService {
     return extractClaim(token, Claims::getSubject);
   }
 
+  public Integer extractUserId(String token) {
+    return extractClaim(token, new Function<Claims, Integer>() {
+      @Override
+      public Integer apply(Claims claims) {
+        // Lấy giá trị của "id" từ claims và ép kiểu sang Long
+        return (Integer) claims.get("id");
+      }
+    });
+  }
+
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
     final Claims claims = extractAllClaims(token);
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+  public String generateToken(User userDetails) {
+    Map<String, Object> extraClaims = new HashMap<>();
+    extraClaims.put("id", userDetails.getId());
+    return generateToken(extraClaims, userDetails);
   }
 
   public String generateToken(
       Map<String, Object> extraClaims,
-      UserDetails userDetails
-  ) {
+      UserDetails userDetails) {
     return Jwts
         .builder()
         .setClaims(extraClaims)

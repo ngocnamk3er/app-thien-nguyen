@@ -34,12 +34,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     final String authHeader = request.getHeader("Authorization");
     final String jwt;
     final String userName;
+    final Integer userId;
     if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
     jwt = authHeader.substring(7);
     userName = jwtService.extractUsername(jwt);
+    userId = jwtService.extractUserId(jwt);
     System.out.println("userName----------------------------");
     System.out.println(userName);
     System.out.println("userName----------------------------");
@@ -58,6 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
     }
     request.setAttribute("userName", userName);
+    request.setAttribute("userId", userId);
     filterChain.doFilter(request, response);
   }
 }

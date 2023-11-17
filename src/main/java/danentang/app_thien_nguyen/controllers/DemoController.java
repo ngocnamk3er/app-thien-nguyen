@@ -20,7 +20,7 @@ public class DemoController {
     System.out.println(request.getAttribute("userName"));
     System.out.println("--------------------------");
 
-    return ResponseEntity.ok("Hello " +request.getAttribute("userName")+ " from 1234 secured endpoint ");
+    return ResponseEntity.ok("Hello user : " +request.getAttribute("userName")+ " from 1234 secured endpoint, your id is : " + request.getAttribute("userId"));
   }
 
 }
