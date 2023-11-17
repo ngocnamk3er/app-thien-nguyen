@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import danentang.app_thien_nguyen.models.DataModels.Fanpage;
 import danentang.app_thien_nguyen.models.DataModels.User;
 import danentang.app_thien_nguyen.models.ReqModels.FanpageRequest;
+import danentang.app_thien_nguyen.models.ResModels.FanpageResponse;
 import danentang.app_thien_nguyen.services.FanpageService;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,20 +22,28 @@ public class FanpageController {
     private final FanpageService fanpageService;
 
     @GetMapping
-    public ResponseEntity<List<Fanpage>> getAllFanpages() {
+    public ResponseEntity<List<FanpageResponse>> getAllFanpages() {
         List<Fanpage> fanpages = fanpageService.getAllFanpages();
-        return ResponseEntity.ok(fanpages);
+        List<FanpageResponse> fanpageResponses = new ArrayList<FanpageResponse>();
+        for (Fanpage fanpage : fanpages) {
+            FanpageResponse fanpageResponse = new FanpageResponse(fanpage.getFanpageName(), fanpage.getLeaderId().getId(),fanpage.getLeaderId().getUsername(), fanpage.getStatus(), fanpage.getCreateTime(), fanpage.getSubscriber());
+            fanpageResponses.add(fanpageResponse);
+        }
+        return ResponseEntity.ok(fanpageResponses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Fanpage> getFanpageById(@PathVariable Integer id) {
+    public ResponseEntity<FanpageResponse> getFanpageById(@PathVariable Integer id) {
         Fanpage fanpage = fanpageService.getFanpageById(id);
         if (fanpage != null) {
-            return ResponseEntity.ok(fanpage);
+            FanpageResponse fanpageResponse = new FanpageResponse(fanpage.getFanpageName(), fanpage.getLeaderId().getId(), fanpage.getLeaderId().getUsername(), id, fanpage.getCreateTime(), fanpage.getSubscriber());
+            return ResponseEntity.ok(fanpageResponse);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
+    
 
     @PostMapping
     public ResponseEntity<FanpageRequest> createFanpage(@RequestBody FanpageRequest fanpageRequest) {
