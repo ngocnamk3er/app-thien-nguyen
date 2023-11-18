@@ -36,13 +36,7 @@ public class FanpageService {
         return newFanpage;
     }
 
-    public void deleteFanpage(Integer id, Integer userid) throws Exception {
-        Fanpage fanpage = fanpageRepository.findById(id).orElse(null);
-        if (userid.equals(fanpage.getLeaderId().getId())) {
-            fanpageRepository.deleteById(id);
-        } else {
-            throw new Exception("Access denied");
-        }
-
+    public void deleteFanpage(Integer id) throws Exception {
+        fanpageRepository.deleteById(id);
     }
 }
