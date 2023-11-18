@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import danentang.app_thien_nguyen.models.DataModels.Fanpage;
 import danentang.app_thien_nguyen.models.DataModels.User;
 import danentang.app_thien_nguyen.models.ReqModels.FanpageRequest;
+import danentang.app_thien_nguyen.models.ResModels.FanpageResponse;
 import danentang.app_thien_nguyen.repositories.FanpageRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -25,13 +26,13 @@ public class FanpageService {
         return fanpageRepository.findById(id).orElse(null);
     }
 
-    public User saveFanpage(FanpageRequest fanpage) {
-        User leader = userService.findById(fanpage.getLeaderId());
+    public Fanpage saveFanpage(FanpageRequest fanpage, Integer leaderId) {
+        User leader = userService.findById(leaderId);
         Fanpage newFanpage = Fanpage.builder().fanpageName(fanpage.getFanpageName()).leaderId(leader)
                 .status(fanpage.getStatus()).createTime(fanpage.getCreateTime()).subscriber(fanpage.getSubscriber())
                 .build();
         fanpageRepository.save(newFanpage);
-        return leader;
+        return newFanpage;
     }
 
     public void deleteFanpage(Integer id) {

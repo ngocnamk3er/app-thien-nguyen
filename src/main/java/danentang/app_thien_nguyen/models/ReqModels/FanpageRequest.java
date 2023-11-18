@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FanpageRequest {
     String fanpageName;
-    Integer leaderId;
     Integer status;
     Date createTime;//Date
     Integer subscriber;
