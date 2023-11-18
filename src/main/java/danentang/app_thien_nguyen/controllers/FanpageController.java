@@ -65,35 +65,64 @@ public class FanpageController {
         return new ResponseEntity<>(FanpageResponse, HttpStatus.OK);
     }
 
-    // @PutMapping("/{id}")
-    // public ResponseEntity<FanpageResponse> updateFanpage(@PathVariable Integer id, @RequestBody Fanpage fanpage) {
-        
-    // }
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateFanpage(@PathVariable Integer id, @RequestBody FanpageRequest fanpageRequest) {
+        String userIdStr = request.getAttribute("userId").toString();
+        Integer userId = Integer.valueOf(userIdStr);
+
+        // Kiểm tra xem fanpage có tồn tại không
+        Fanpage existingFanpage = fanpageService.getFanpageById(id);
+        if (existingFanpage == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This fanpage does not exist");
+        }
+
+        // Kiểm tra xem người dùng có quyền cập nhật fanpage không
+        if (!existingFanpage.getLeaderId().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You don't have permission to update this fanpage.");
+        }
+
+        // Thực hiện cập nhật thông tin fanpage
+        try {
+            Fanpage updatedFanpage = fanpageService.updateFanpage(existingFanpage, fanpageRequest);
+
+            // Tạo đối tượng FanpageResponse từ fanpage đã cập nhật
+            FanpageResponse fanpageResponse = new FanpageResponse(updatedFanpage.getFanpageName(),
+                    updatedFanpage.getLeaderId().getId(), updatedFanpage.getLeaderId().getUsername(),
+                    updatedFanpage.getId(), updatedFanpage.getCreateTime(), updatedFanpage.getSubscriber());
+
+            // Trả về đối tượng FanpageResponse đã cập nhật và mã trạng thái OK
+            return ResponseEntity.ok(fanpageResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
     @DeleteMapping("/{id}")
-public ResponseEntity<String> deleteFanpage(@PathVariable Integer id) {
-    String userIdStr = request.getAttribute("userId").toString();
-    Integer userId = Integer.valueOf(userIdStr);
+    public ResponseEntity<String> deleteFanpage(@PathVariable Integer id) {
+        String userIdStr = request.getAttribute("userId").toString();
+        Integer userId = Integer.valueOf(userIdStr);
 
-    // Kiểm tra xem fanpage có tồn tại không
-    Fanpage existingFanpage = fanpageService.getFanpageById(id);
-    if (existingFanpage == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This fanpage does not exist");
+        // Kiểm tra xem fanpage có tồn tại không
+        Fanpage existingFanpage = fanpageService.getFanpageById(id);
+        if (existingFanpage == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This fanpage does not exist");
+        }
+
+        // Kiểm tra xem người dùng có quyền xóa fanpage không
+        if (!existingFanpage.getLeaderId().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You don't have permission to delete this fanpage.");
+        }
+
+        // Thực hiện xóa fanpage
+        try {
+            fanpageService.deleteFanpage(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+        return ResponseEntity.ok("Delete Successfully");
     }
-
-    // Kiểm tra xem người dùng có quyền xóa fanpage không
-    if (!existingFanpage.getLeaderId().getId().equals(userId)) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You don't have permission to delete this fanpage.");
-    }
-
-    // Thực hiện xóa fanpage
-    try {
-        fanpageService.deleteFanpage(id);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-    }
-
-    return ResponseEntity.ok("Delete Successfully");
-}
 
 }
