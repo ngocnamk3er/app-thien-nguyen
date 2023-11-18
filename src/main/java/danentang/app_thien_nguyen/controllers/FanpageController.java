@@ -59,31 +59,28 @@ public class FanpageController {
         String leaderIdStr = request.getAttribute("userId").toString();
         Integer leaderId = Integer.valueOf(leaderIdStr);
         Fanpage fanpage = fanpageService.saveFanpage(fanpageRequest, leaderId);
-        FanpageResponse FanpageResponse = new FanpageResponse(fanpage.getFanpageName(), fanpage.getLeaderId().getId(), fanpage.getLeaderId().getUsername(), fanpage.getStatus(), fanpage.getCreateTime(), fanpage.getSubscriber());
+        FanpageResponse FanpageResponse = new FanpageResponse(fanpage.getFanpageName(), fanpage.getLeaderId().getId(),
+                fanpage.getLeaderId().getUsername(), fanpage.getStatus(), fanpage.getCreateTime(),
+                fanpage.getSubscriber());
         return new ResponseEntity<>(FanpageResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Fanpage> updateFanpage(@PathVariable Integer id, @RequestBody Fanpage fanpage) {
-        Fanpage existingFanpage = fanpageService.getFanpageById(id);
-        if (existingFanpage != null) {
-            // Set new values for the existing fanpage
-            existingFanpage.setFanpageName(fanpage.getFanpageName());
-            existingFanpage.setLeaderId(fanpage.getLeaderId());
-            existingFanpage.setStatus(fanpage.getStatus());
-            existingFanpage.setCreateTime(fanpage.getCreateTime());
-            existingFanpage.setSubscriber(fanpage.getSubscriber());
 
-            // fanpageService.saveFanpage(existingFanpage);
-            return ResponseEntity.ok(existingFanpage);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(null);
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFanpage(@PathVariable Integer id) {
-        fanpageService.deleteFanpage(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteFanpage(@PathVariable Integer id) throws Exception {
+        String userIdStr = request.getAttribute("userId").toString();
+        Integer userId = Integer.valueOf(userIdStr);
+        try {
+            fanpageService.deleteFanpage(id, userId);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok("Delete Successfully");
     }
 }

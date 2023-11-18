@@ -10,6 +10,7 @@ import danentang.app_thien_nguyen.repositories.FanpageRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,13 @@ public class FanpageService {
         return newFanpage;
     }
 
-    public void deleteFanpage(Integer id) {
-        fanpageRepository.deleteById(id);
+    public void deleteFanpage(Integer id, Integer userid) throws Exception {
+        Fanpage fanpage = fanpageRepository.findById(id).orElse(null);
+        if (userid.equals(fanpage.getLeaderId().getId())) {
+            fanpageRepository.deleteById(id);
+        } else {
+            throw new Exception("Access denied");
+        }
+
     }
 }
