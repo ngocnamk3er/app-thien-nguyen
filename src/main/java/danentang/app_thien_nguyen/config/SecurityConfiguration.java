@@ -15,7 +15,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-  private final String[] WHITELIST = {"/api/v1/demo-controller", "/api/v1/auth/*", "/swagger-ui/**", "/v3/api-docs/**"};
+  private final String[] WHITELIST = {
+      "/api/v1/auth/*",
+      "/swagger-ui/**",
+      "/v3/api-docs/**"
+  };
 
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
