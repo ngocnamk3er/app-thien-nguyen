@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import danentang.app_thien_nguyen.mappers.FanpageMapper;
+import danentang.app_thien_nguyen.models.DTOs.FanpageDTO;
 import danentang.app_thien_nguyen.models.DataModels.Fanpage;
 import danentang.app_thien_nguyen.models.DataModels.User;
-import danentang.app_thien_nguyen.models.ReqModels.FanpageRequest;
-import danentang.app_thien_nguyen.models.ResModels.FanpageResponse;
 import danentang.app_thien_nguyen.services.FanpageService;
 import danentang.app_thien_nguyen.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,35 +37,28 @@ public class FanpageController {
     private final FanpageService fanpageService;
     private final UserService userService;
     private final HttpServletRequest request;
+    private final FanpageMapper fanpageMapper;
 
     @GetMapping("/api/fanpages")
-    @Operation(summary = "Get fanpages", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<?> getAllFanpages(
-            @RequestParam(name = "userId", required = false) Integer userId) {
-        try {
-
-            List<Fanpage> fanpages = fanpageService.getFanpagesByCriteria(userId);
-            List<FanpageResponse> fanpageResponses = new ArrayList<FanpageResponse>();
-            for (Fanpage fanpage : fanpages) {
-                FanpageResponse fanpageResponse = new FanpageResponse(fanpage.getFanpageName(),
-                        fanpage.getLeader().getId(), fanpage.getLeader().getUsername(), fanpage.getStatus(),
-                        fanpage.getCreateTime(), fanpage.getSubscriber());
-                fanpageResponses.add(fanpageResponse);
-            }
-            return ResponseEntity.ok(fanpageResponses);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+@Operation(summary = "Get fanpages", security = @SecurityRequirement(name = "bearerAuth"))
+public ResponseEntity<?> getAllFanpages(
+        @RequestParam(name = "userId", required = false) Integer userId) {
+    try {
+        List<Fanpage> fanpages = fanpageService.getFanpagesByCriteria(userId);
+        List<FanpageDTO> fanpageDTOs = fanpageMapper.fanpagesToFanpageDTOs(fanpages);
+        return ResponseEntity.ok(fanpageDTOs);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+}
+
 
     @GetMapping("/api/fanpages/{id}")
     @Operation(summary = "Get fanpages/{id}", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<?> getFanpageById(@PathVariable Integer id) {
         try {
             Fanpage fanpage = fanpageService.getFanpageById(id);
-            FanpageResponse fanpageResponse = new FanpageResponse(fanpage.getFanpageName(),
-                    fanpage.getLeader().getId(), fanpage.getLeader().getUsername(), id, fanpage.getCreateTime(),
-                    fanpage.getSubscriber());
+            FanpageDTO fanpageResponse = fanpageMapper.fanpageToFanpageDTO(fanpage);
             return ResponseEntity.ok(fanpageResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -74,7 +67,7 @@ public class FanpageController {
 
     @PostMapping("/api/fanpages")
     @Operation(summary = "Post new fanpage", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<?> createFanpage(@RequestBody FanpageRequest fanpageRequest) {
+    public ResponseEntity<?> createFanpage(@RequestBody FanpageDTO fanpageRequest) {
         System.out.println("in post request fanpage");
         try {
             String leaderIdStr = request.getAttribute("userId").toString();
@@ -84,10 +77,7 @@ public class FanpageController {
                 .status(fanpageRequest.getStatus()).createTime(fanpageRequest.getCreateTime()).subscriber(fanpageRequest.getSubscriber())
                 .build();
             Fanpage fanpage = fanpageService.saveFanpage(newFanpage);
-            FanpageResponse FanpageResponse = new FanpageResponse(fanpage.getFanpageName(),
-                    fanpage.getLeader().getId(),
-                    fanpage.getLeader().getUsername(), fanpage.getStatus(), fanpage.getCreateTime(),
-                    fanpage.getSubscriber());
+            FanpageDTO FanpageResponse = fanpageMapper.fanpageToFanpageDTO(fanpage);
             return new ResponseEntity<>(FanpageResponse, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -96,7 +86,7 @@ public class FanpageController {
 
     @PutMapping("/api/fanpages/{id}")
     @Operation(summary = "Put fanpages/{id}", security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<Object> updateFanpage(@PathVariable Integer id, @RequestBody FanpageRequest fanpageRequest) {
+    public ResponseEntity<Object> updateFanpage(@PathVariable Integer id, @RequestBody FanpageDTO fanpageRequest) {
         String userIdStr = request.getAttribute("userId").toString();
         Integer userId = Integer.valueOf(userIdStr);
 
@@ -116,9 +106,7 @@ public class FanpageController {
             Fanpage updatedFanpage = fanpageService.updateFanpage(existingFanpage, fanpageRequest);
 
             // Tạo đối tượng FanpageResponse từ fanpage đã cập nhật
-            FanpageResponse fanpageResponse = new FanpageResponse(updatedFanpage.getFanpageName(),
-                    updatedFanpage.getLeader().getId(), updatedFanpage.getLeader().getUsername(),
-                    updatedFanpage.getId(), updatedFanpage.getCreateTime(), updatedFanpage.getSubscriber());
+            FanpageDTO fanpageResponse = fanpageMapper.fanpageToFanpageDTO(updatedFanpage);
 
             // Trả về đối tượng FanpageResponse đã cập nhật và mã trạng thái OK
             return ResponseEntity.ok(fanpageResponse);

@@ -5,10 +5,9 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import danentang.app_thien_nguyen.models.DTOs.FanpageDTO;
 import danentang.app_thien_nguyen.models.DataModels.Fanpage;
 import danentang.app_thien_nguyen.models.DataModels.User;
-import danentang.app_thien_nguyen.models.ReqModels.FanpageRequest;
-import danentang.app_thien_nguyen.models.ResModels.FanpageResponse;
 import danentang.app_thien_nguyen.repositories.FanpageRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -53,7 +52,7 @@ public class FanpageService {
         fanpageRepository.deleteById(id);
     }
 
-    public Fanpage updateFanpage(Fanpage existingFanpage, FanpageRequest fanpageRequest) {
+    public Fanpage updateFanpage(Fanpage existingFanpage, FanpageDTO fanpageRequest) {
 
         // Thực hiện cập nhật thông tin Fanpage
         existingFanpage.setFanpageName(fanpageRequest.getFanpageName());
