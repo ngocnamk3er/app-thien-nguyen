@@ -6,7 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import danentang.app_thien_nguyen.models.Role;
+import danentang.app_thien_nguyen.models.DataModels.Role;
 import danentang.app_thien_nguyen.models.DataModels.User;
 import danentang.app_thien_nguyen.models.ReqModels.AuthenticationRequest;
 import danentang.app_thien_nguyen.models.ReqModels.RegisterRequest;

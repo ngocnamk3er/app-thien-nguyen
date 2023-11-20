@@ -18,8 +18,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import danentang.app_thien_nguyen.models.Role;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -35,7 +33,7 @@ public class User implements UserDetails {
   private String email;
   private String password;
   
-  @OneToMany(mappedBy = "leaderId", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL)
   private List<Fanpage> fanpages;
 
   @Enumerated(EnumType.STRING)

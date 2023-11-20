@@ -48,7 +48,7 @@ public class FanpageController {
             List<FanpageResponse> fanpageResponses = new ArrayList<FanpageResponse>();
             for (Fanpage fanpage : fanpages) {
                 FanpageResponse fanpageResponse = new FanpageResponse(fanpage.getFanpageName(),
-                        fanpage.getLeaderId().getId(), fanpage.getLeaderId().getUsername(), fanpage.getStatus(),
+                        fanpage.getLeader().getId(), fanpage.getLeader().getUsername(), fanpage.getStatus(),
                         fanpage.getCreateTime(), fanpage.getSubscriber());
                 fanpageResponses.add(fanpageResponse);
             }
@@ -64,7 +64,7 @@ public class FanpageController {
         try {
             Fanpage fanpage = fanpageService.getFanpageById(id);
             FanpageResponse fanpageResponse = new FanpageResponse(fanpage.getFanpageName(),
-                    fanpage.getLeaderId().getId(), fanpage.getLeaderId().getUsername(), id, fanpage.getCreateTime(),
+                    fanpage.getLeader().getId(), fanpage.getLeader().getUsername(), id, fanpage.getCreateTime(),
                     fanpage.getSubscriber());
             return ResponseEntity.ok(fanpageResponse);
         } catch (Exception e) {
@@ -79,11 +79,14 @@ public class FanpageController {
         try {
             String leaderIdStr = request.getAttribute("userId").toString();
             Integer leaderId = Integer.valueOf(leaderIdStr);
-            Optional<User> user = userService.findById(leaderId);
-            Fanpage fanpage = fanpageService.saveFanpage(fanpageRequest, user.orElseThrow());
+            Optional<User> leader = userService.findById(leaderId);
+            Fanpage newFanpage = Fanpage.builder().fanpageName(fanpageRequest.getFanpageName()).leader(leader.orElseThrow())
+                .status(fanpageRequest.getStatus()).createTime(fanpageRequest.getCreateTime()).subscriber(fanpageRequest.getSubscriber())
+                .build();
+            Fanpage fanpage = fanpageService.saveFanpage(newFanpage);
             FanpageResponse FanpageResponse = new FanpageResponse(fanpage.getFanpageName(),
-                    fanpage.getLeaderId().getId(),
-                    fanpage.getLeaderId().getUsername(), fanpage.getStatus(), fanpage.getCreateTime(),
+                    fanpage.getLeader().getId(),
+                    fanpage.getLeader().getUsername(), fanpage.getStatus(), fanpage.getCreateTime(),
                     fanpage.getSubscriber());
             return new ResponseEntity<>(FanpageResponse, HttpStatus.OK);
         } catch (Exception e) {
@@ -97,11 +100,14 @@ public class FanpageController {
         String userIdStr = request.getAttribute("userId").toString();
         Integer userId = Integer.valueOf(userIdStr);
 
+        System.out.println("=============================");
+        System.out.println(fanpageRequest);
+
         try {
 
             Fanpage existingFanpage = fanpageService.getFanpageById(id);
 
-            if (!existingFanpage.getLeaderId().getId().equals(userId)) {
+            if (!existingFanpage.getLeader().getId().equals(userId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("You don't have permission to update this fanpage.");
             }
@@ -111,7 +117,7 @@ public class FanpageController {
 
             // Tạo đối tượng FanpageResponse từ fanpage đã cập nhật
             FanpageResponse fanpageResponse = new FanpageResponse(updatedFanpage.getFanpageName(),
-                    updatedFanpage.getLeaderId().getId(), updatedFanpage.getLeaderId().getUsername(),
+                    updatedFanpage.getLeader().getId(), updatedFanpage.getLeader().getUsername(),
                     updatedFanpage.getId(), updatedFanpage.getCreateTime(), updatedFanpage.getSubscriber());
 
             // Trả về đối tượng FanpageResponse đã cập nhật và mã trạng thái OK
@@ -131,7 +137,7 @@ public class FanpageController {
             Fanpage existingFanpage = fanpageService.getFanpageById(id);
 
             // Kiểm tra xem người dùng có quyền xóa fanpage không
-            if (!existingFanpage.getLeaderId().getId().equals(userId)) {
+            if (!existingFanpage.getLeader().getId().equals(userId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("You don't have permission to delete this fanpage.");
             }

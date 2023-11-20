@@ -32,7 +32,7 @@ public class FanpageService {
 
         if (leaderId != null) {
             Optional<User> leader = userService.findById(leaderId);
-            fanpageExample.setLeaderId(leader.orElseThrow());
+            fanpageExample.setLeader(leader.orElseThrow());
         }
 
         ExampleMatcher matcher = ExampleMatcher.matching();
@@ -45,11 +45,8 @@ public class FanpageService {
         return fanpageRepository.findById(id).orElseThrow();
     }
 
-    public Fanpage saveFanpage(FanpageRequest fanpage, User leader) {
-        Fanpage newFanpage = Fanpage.builder().fanpageName(fanpage.getFanpageName()).leaderId(leader)
-                .status(fanpage.getStatus()).createTime(fanpage.getCreateTime()).subscriber(fanpage.getSubscriber())
-                .build();
-        return fanpageRepository.save(newFanpage);
+    public Fanpage saveFanpage(Fanpage fanpage) {
+        return fanpageRepository.save(fanpage);
     }
 
     public void deleteFanpage(Integer id) throws Exception {
